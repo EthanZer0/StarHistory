@@ -15,9 +15,29 @@
 - **批量生成** `scripts/fetch.mjs`：读 `repos.json`，为每个 repo 生成 `svg/{owner-repo}.svg` + `history/{owner-repo}.json`
 - **调度** `.github/workflows/star-history.yml`：每日 UTC 02:47 更新
 
-## 配置要生成的项目
+## 快速开始
 
-编辑 [repos.json](repos.json)，列出要生成 star 图的仓库：
+### 1. 克隆项目
+
+```bash
+git clone https://github.com/EthanZer0/StarHistory.git
+cd StarHistory
+npm install
+```
+
+### 2. 配置 Token（GitHub Actions 用）
+
+在 **StarHistory 仓库** → Settings → Secrets and variables → Actions → New repository secret，添加：
+
+| 名称 | 值 |
+|---|---|
+| `STAR_HISTORY_TOKEN` | 你的 GitHub classic PAT |
+
+> **必须用 classic PAT**（`ghp_` 开头）。2026-06 后 GitHub 收紧 stargazers API，fine-grained PAT（`github_pat_` 开头）读不了。token 只读账号下你能访问的仓库即可。
+
+### 3. 添加要生成的项目
+
+编辑 [repos.json](repos.json)，列出仓库：
 
 ```json
 [
@@ -26,19 +46,28 @@
 ]
 ```
 
-workflow 会自动为每个 repo 生成独立 SVG，无需改代码。
+### 4. 本地生成（可选，验证效果）
 
-## 在 README 中引用
+```bash
+# 用 GitHub Actions 的 token 值，或你自己的 PAT
+export STAR_HISTORY_TOKEN=ghp_xxxxxxxx
+node scripts/fetch.mjs
+```
+
+每个 repo 会生成：
+- `svg/{owner-repo}.svg` — 图表
+- `history/{owner-repo}.json` — 数据
+
+### 5. 在项目 README 引用
 
 ```markdown
 ![FaceLogin Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/svg/EthanZer0-FaceLogin.svg)
 ```
 
-## 本地运行
+### 6. 自动更新
+
+workflow 每日 UTC 02:47 自动跑一次，也可手动触发：
 
 ```bash
-npm install
-STAR_HISTORY_TOKEN=<token> node scripts/fetch.mjs     # 批量（读 repos.json）
-# 或单 repo 覆盖
-node scripts/fetch.mjs --repos owner/repo --out out.svg
+gh workflow run star-history.yml --repo EthanZer0/StarHistory
 ```
