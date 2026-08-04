@@ -1,10 +1,10 @@
 # Star History
 
-自托管 star 曲线图，为 [FaceLogin](https://github.com/EthanZer0/FaceLogin) 生成官方 [star-history.com](https://star-history.com) 风格的星标历史图表。
+自托管 star 曲线图，用官方 [star-history.com](https://star-history.com) 渲染管线为多个 GitHub 项目批量生成星标历史图表。
 
 ## 图表
 
-![Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/star-history.svg)
+![FaceLogin Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/svg/EthanZer0-FaceLogin.svg)
 
 ## 原理
 
@@ -12,21 +12,33 @@
 
 - **渲染核心** `src/`：官方 `xy-chart.tsx` + `drawAxis/drawLabels/drawLegend/drawWatermark` + d3 依赖，逐字移植
 - **数据获取** `src/api.js`：官方 `getRepoStarRecords` 采样逻辑（GitHub API，全量拉取）
-- **生成** `scripts/fetch.mjs`：拉数据 → JSDOM + XYChart + svgo 生成 SVG（Date 模式 + 插零点，对齐官方前端交互图）
+- **批量生成** `scripts/fetch.mjs`：读 `repos.json`，为每个 repo 生成 `svg/{owner-repo}.svg` + `history/{owner-repo}.json`
 - **调度** `.github/workflows/star-history.yml`：每日 UTC 02:47 更新
+
+## 配置要生成的项目
+
+编辑 [repos.json](repos.json)，列出要生成 star 图的仓库：
+
+```json
+[
+  "EthanZer0/FaceLogin",
+  "owner/other-repo"
+]
+```
+
+workflow 会自动为每个 repo 生成独立 SVG，无需改代码。
 
 ## 在 README 中引用
 
 ```markdown
-![FaceLogin Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/star-history.svg)
+![FaceLogin Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/svg/EthanZer0-FaceLogin.svg)
 ```
 
 ## 本地运行
 
 ```bash
 npm install
-# 拉取数据并生成
-STAR_HISTORY_TOKEN=<token> node scripts/fetch.mjs
-# 或只用已有历史重新生成
-node scripts/fetch.mjs
+STAR_HISTORY_TOKEN=<token> node scripts/fetch.mjs     # 批量（读 repos.json）
+# 或单 repo 覆盖
+node scripts/fetch.mjs --repos owner/repo --out out.svg
 ```

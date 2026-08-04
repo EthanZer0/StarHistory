@@ -36,22 +36,24 @@ jobs:
         env:
           STAR_HISTORY_TOKEN: ${{ secrets.STAR_HISTORY_TOKEN }}
         run: |
-          # 从历史恢复累积 history.json（已在仓库中）
+          # 批量：读 repos.json，为每个 repo 生成独立 SVG
           node scripts/fetch.mjs
 
       - name: Show result
         run: |
-          echo "=== history.json ==="
-          tail -5 history.json
-          echo "=== svg ==="
-          ls -la star-history.svg
+          echo "=== repos ==="
+          cat repos.json
+          echo "=== history/ ==="
+          ls -la history/
+          echo "=== svg/ ==="
+          ls -la svg/
 
       - name: Commit
         run: |
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add history.json star-history.svg
+          git add repos.json history/ svg/
           if ! git diff --cached --quiet; then
             git commit -m "Update star history ($(date +%Y-%m-%d))"
             git push origin main
