@@ -1,0 +1,20 @@
+{
+  "name": "star-history-action",
+  "version": "1.0.0",
+  "description": "1:1 复刻 star-history.com 的 star 曲线，部署为 GitHub Action",
+  "type": "module",
+  "scripts": {
+    "fetch": "node scripts/fetch.mjs",
+    "generate": "node scripts/generate.mjs"
+  },
+  "dependencies": {
+    "d3-axis": "^2.1.0",
+    "d3-scale": "^3.3.0",
+    "d3-selection": "^2.0.0",
+    "d3-shape": "^2.1.0",
+    "dayjs": "^1.11.10",
+    "jsdom": "20.0.2",
+    "lodash": "^4.17.21",
+    "svgo": "^3.2.0"
+  }
+}

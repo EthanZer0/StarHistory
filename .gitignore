@@ -1,0 +1,12 @@
+# 依赖
+node_modules/
+
+# 生成产物（由 workflow 提交，初始可留空）
+# history.json / star-history.svg 由 workflow 生成并提交
+
+# 临时检查文件
+.check/
+
+# OS
+Thumbs.db
+.DS_Store

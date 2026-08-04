@@ -1,0 +1,60 @@
+name: Update Star History
+
+on:
+  schedule:
+    # 每天 UTC 02:47 更新（错峰）
+    - cron: "47 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: star-history
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --omit=dev || npm install --omit=dev
+
+      - name: Fetch star data + generate SVG
+        env:
+          STAR_HISTORY_TOKEN: ${{ secrets.STAR_HISTORY_TOKEN }}
+        run: |
+          # 从历史恢复累积 history.json（已在仓库中）
+          node scripts/fetch.mjs
+
+      - name: Show result
+        run: |
+          echo "=== history.json ==="
+          tail -5 history.json
+          echo "=== svg ==="
+          ls -la star-history.svg
+
+      - name: Commit
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add history.json star-history.svg
+          if ! git diff --cached --quiet; then
+            git commit -m "Update star history ($(date +%Y-%m-%d))"
+            git push origin main
+          else
+            echo "无变化，跳过提交"
+          fi
