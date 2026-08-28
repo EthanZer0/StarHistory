@@ -6,6 +6,8 @@
 
 ![FaceLogin Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/svg/EthanZer0-FaceLogin.svg)
 
+![BetterTypora Star History](https://raw.githubusercontent.com/EthanZer0/StarHistory/main/svg/EthanZer0-BetterTypora.svg)
+
 ## 原理
 
 完全复刻官方 star-history 项目的渲染管线（1:1）：
